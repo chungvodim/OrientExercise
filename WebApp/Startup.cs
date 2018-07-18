@@ -49,28 +49,13 @@ namespace WebApp
 
         public void ConfigureProductionServices(IServiceCollection services)
         {
-            // use real database
-            // Requires LocalDB which can be installed with SQL Server Express 2016
-            // https://www.microsoft.com/en-us/download/details.aspx?id=54284
-            services.AddDbContext<MyDbContext>(c => c.UseSqlServer(Configuration.GetConnectionString("CatalogConnection")));
+            services.AddDbContext<MyDbContext>(c => c.UseSqlServer(Configuration.GetConnectionString("MyDbConnection")));
 
             ConfigureServices(services);
         }
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.ConfigureApplicationCookie(options =>
-            {
-                options.Cookie.HttpOnly = true;
-                options.ExpireTimeSpan = TimeSpan.FromHours(1);
-                options.LoginPath = "/Account/Signin";
-                options.LogoutPath = "/Account/Signout";
-                options.Cookie = new CookieBuilder
-                {
-                    IsEssential = true // required for auth to work without explicit user consent; adjust to suit your privacy policy
-                };
-            });
-
             services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
             services.AddScoped(typeof(IAsyncRepository<>), typeof(EfRepository<>));
 
