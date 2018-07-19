@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Data.Repositories
 {
-    public class EfRepository<T> : IRepository<T>, IAsyncRepository<T> where T : BaseEntity
+    public class EfRepository<T> : IAsyncRepository<T> where T : BaseEntity
     {
         protected readonly MyDbContext _dbContext;
         protected internal DbSet<T> _dbSet;
@@ -64,17 +64,15 @@ namespace Infrastructure.Data.Repositories
                             .AsEnumerable();
         }
 
-        public virtual IEnumerable<T> List(Expression<Func<T, bool>> filter, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy)
+        public IEnumerable<T> List(Expression<Func<T, bool>> filter, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy)
         {
-            IEnumerable<T> list;
             IQueryable<T> query = this._dbSet;
             if (filter != null)
             {
                 query = query.Where<T>(filter);
             }
 
-            list = (orderBy == null ? query.ToList<T>() : orderBy(query).ToList<T>());
-            return list;
+            return (orderBy == null ? query.ToList<T>() : orderBy(query).ToList<T>());
         }
 
         public async Task<List<T>> ListAsync(ISpecification<T> spec)
@@ -93,6 +91,17 @@ namespace Infrastructure.Data.Repositories
             return await secondaryResult
                             .Where(spec.Criteria)
                             .ToListAsync();
+        }
+
+        public async Task<List<T>> ListAsync(Expression<Func<T, bool>> filter, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy)
+        {
+            IQueryable<T> query = this._dbSet;
+            if (filter != null)
+            {
+                query = query.Where<T>(filter);
+            }
+
+            return await (orderBy == null ? query.ToListAsync<T>() : orderBy(query).ToListAsync<T>());
         }
 
         public T Add(T entity)

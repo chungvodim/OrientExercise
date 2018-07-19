@@ -22,9 +22,9 @@ namespace WebApp.Controllers
         /// <param name="packageID"></param>
         /// <returns></returns>
         [HttpPost]
-        public IEnumerable<Product> GetProductsByPackageID(long packageID)
+        public async Task<IEnumerable<Product>> GetProductsByPackageID(long packageID)
         {
-            return _productService.GetProductsByPackageID(packageID);
+            return await _productService.GetProductsByPackageIDAsync(packageID);
         }
 
         /// <summary>
@@ -33,9 +33,9 @@ namespace WebApp.Controllers
         /// <param name="product"></param>
         /// <returns></returns>
         [HttpPost]
-        public Product AddProduct([FromBody] Product product)
+        public async Task<Product> AddProduct([FromBody] Product product)
         {
-            return _productService.AddProduct(product);
+            return await _productService.AddProductAsync(product);
         }
 
         /// <summary>
@@ -45,10 +45,10 @@ namespace WebApp.Controllers
         /// <param name="packageName"></param>
         /// <returns></returns>
         [HttpPut]
-        public IEnumerable<Product> GetProductsAndUpdatePackageNameByPackageID(long packageID, string packageName)
+        public async Task<IEnumerable<Product>> GetProductsAndUpdatePackageNameByPackageID(long packageID, string packageName)
         {
-            _productService.UpdatePackageName(packageID, packageName);
-            return _productService.GetProductsByPackageID(packageID);
+            await _productService.UpdatePackageNameAsync(packageID, packageName);
+            return await _productService.GetProductsByPackageIDAsync(packageID);
         }
 
         /// <summary>
@@ -57,9 +57,9 @@ namespace WebApp.Controllers
         /// <param name="packageID"></param>
         /// <returns></returns>
         [HttpPost]
-        public Package GetPackage(long packageID)
+        public async Task<Package> GetPackage(long packageID)
         {
-            return _productService.GetPackage(packageID);
+            return await _productService.GetPackageAsync(packageID);
         }
     }
 }
