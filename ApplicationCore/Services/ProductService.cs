@@ -43,6 +43,7 @@ namespace ApplicationCore.Services
 
         public async Task<IEnumerable<ProductDTO>> GetProductsByPackageIDAsync(long packageID)
         {
+            _logger.LogInformation("GetProductsByPackageIDAsync");
             var packageDbSet = _packageRepository.GetDbSet();
             var productDbSet = _productRepository.GetDbSet();
             var query = from pk in packageDbSet
