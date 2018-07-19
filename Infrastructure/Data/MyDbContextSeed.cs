@@ -49,8 +49,8 @@ namespace Infrastructure.Data
         {
             return new List<Package>()
             {
-                new Package() { Name = "Azure"},
-                new Package() { Name = "AWS" },
+                new Package() { Name = "Sport"},
+                new Package() { Name = "Tool" },
             };
         }
 

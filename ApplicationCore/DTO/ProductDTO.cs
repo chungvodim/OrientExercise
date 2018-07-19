@@ -7,5 +7,6 @@ namespace ApplicationCore.DTO
 {
     public class ProductDTO : Product
     {
+        public string PackageName { get; set; }
     }
 }

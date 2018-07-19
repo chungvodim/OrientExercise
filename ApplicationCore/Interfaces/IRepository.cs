@@ -10,6 +10,7 @@ namespace ApplicationCore.Interfaces
 {
     public interface IRepository<T> where T : BaseEntity
     {
+        DbSet<T> GetDbSet();
         T GetById(long id);
         T GetSingleBySpec(ISpecification<T> spec);
         IEnumerable<T> ListAll();

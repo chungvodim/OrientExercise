@@ -143,5 +143,10 @@ namespace Infrastructure.Data.Repositories
             _dbContext.Set<T>().Remove(entity);
             await _dbContext.SaveChangesAsync();
         }
+
+        public DbSet<T> GetDbSet()
+        {
+            return this._dbSet;
+        }
     }
 }

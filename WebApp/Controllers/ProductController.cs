@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ApplicationCore.DTO;
 using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -22,7 +23,7 @@ namespace WebApp.Controllers
         /// <param name="packageID"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IEnumerable<Product>> GetProductsByPackageID(long packageID)
+        public async Task<IEnumerable<ProductDTO>> GetProductsByPackageID(long packageID)
         {
             return await _productService.GetProductsByPackageIDAsync(packageID);
         }

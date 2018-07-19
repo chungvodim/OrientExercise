@@ -4,6 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using System.Linq;
+using ApplicationCore.DTO;
+using Microsoft.EntityFrameworkCore;
 
 namespace ApplicationCore.Services
 {
@@ -33,9 +36,23 @@ namespace ApplicationCore.Services
             return await _packageRepository.GetByIdAsync(packageID);
         }
 
-        public async Task<IEnumerable<Product>> GetProductsByPackageIDAsync(long packageID)
+        public async Task<IEnumerable<ProductDTO>> GetProductsByPackageIDAsync(long packageID)
         {
-            return await _productRepository.ListAsync(x => x.PackageID == packageID, null);
+            var packageDbSet = _packageRepository.GetDbSet();
+            var productDbSet = _productRepository.GetDbSet();
+            var query = from pk in packageDbSet
+                        join pd in productDbSet on pk.ID equals pd.PackageID
+                        where pk.ID == packageID
+                        select new ProductDTO
+                        {
+                            ID = pd.ID,
+                            Name = pd.Name,
+                            ProductType = pd.ProductType,
+                            PackageID = pd.PackageID,
+                            PackageName = pk.Name
+                        };
+            //return await _productRepository.ListAsync(x => x.PackageID == packageID, null);
+            return await query.ToListAsync();
         }
 
         public async Task UpdatePackageNameAsync(long packageID, string packageName)
