@@ -6,8 +6,8 @@ namespace ApplicationCore.Entities
 {
     public class Product: BaseEntity
     {
-        public string Name { get; set; }
-        public string ProductType { get; set; }
-        public long PackageID { get; set; }
+        public virtual string Name { get; set; }
+        public virtual string ProductType { get; set; }
+        public virtual long PackageID { get; set; }
     }
 }

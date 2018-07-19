@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using ApplicationCore.DTO;
 using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using WebApp.Models;
 
 namespace WebApp.Controllers
 {
@@ -22,7 +24,8 @@ namespace WebApp.Controllers
         /// </summary>
         /// <param name="packageID"></param>
         /// <returns></returns>
-        [HttpPost]
+        [HttpGet]
+        [ActionName("GetProductsByPackageID")]
         public async Task<IEnumerable<ProductDTO>> GetProductsByPackageID(long packageID)
         {
             return await _productService.GetProductsByPackageIDAsync(packageID);
@@ -33,10 +36,22 @@ namespace WebApp.Controllers
         /// </summary>
         /// <param name="product"></param>
         /// <returns></returns>
-        [HttpPost]
-        public async Task<Product> AddProduct([FromBody] Product product)
+        [HttpPut]
+        public async Task<IActionResult> AddProduct([FromBody] ProductDTO product)
         {
-            return await _productService.AddProductAsync(product);
+            //if (!ModelState.IsValid)
+            //{
+            //    return BadRequest(new ApiResponse(HttpStatusCode.BadRequest, ApiResponseType.Error, "Invalid Input"));
+            //}
+            await _productService.AddProductAsync(product);
+            return Ok(new ApiResponse(HttpStatusCode.OK, ApiResponseType.Success, "Add product successfully"));
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> DeleteProduct(long productID)
+        {
+            await _productService.DeleteProductAsync(productID);
+            return Ok(new ApiResponse(HttpStatusCode.OK, ApiResponseType.Success, "Delete product successfully"));
         }
 
         /// <summary>
@@ -45,7 +60,7 @@ namespace WebApp.Controllers
         /// <param name="packageID"></param>
         /// <param name="packageName"></param>
         /// <returns></returns>
-        [HttpPut]
+        [HttpPost]
         public async Task<IEnumerable<Product>> GetProductsAndUpdatePackageNameByPackageID(long packageID, string packageName)
         {
             await _productService.UpdatePackageNameAsync(packageID, packageName);
@@ -57,7 +72,7 @@ namespace WebApp.Controllers
         /// </summary>
         /// <param name="packageID"></param>
         /// <returns></returns>
-        [HttpPost]
+        [HttpGet]
         public async Task<Package> GetPackage(long packageID)
         {
             return await _productService.GetPackageAsync(packageID);

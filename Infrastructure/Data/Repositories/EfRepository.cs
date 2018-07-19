@@ -148,5 +148,17 @@ namespace Infrastructure.Data.Repositories
         {
             return this._dbSet;
         }
+
+        public async Task DeleteAsync(long id)
+        {
+            var entity = await GetByIdAsync(id);
+            await DeleteAsync(entity);
+        }
+
+        public void Delete(long id)
+        {
+            var entity = GetById(id);
+            Delete(entity);
+        }
     }
 }

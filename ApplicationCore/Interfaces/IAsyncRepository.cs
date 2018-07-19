@@ -17,5 +17,6 @@ namespace ApplicationCore.Interfaces
         Task<T> AddAsync(T entity);
         Task UpdateAsync(T entity);
         Task DeleteAsync(T entity);
+        Task DeleteAsync(long id);
     }
 }

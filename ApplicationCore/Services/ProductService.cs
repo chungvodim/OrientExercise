@@ -31,6 +31,11 @@ namespace ApplicationCore.Services
             return await _productRepository.AddAsync(product);
         }
 
+        public async Task DeleteProductAsync(long productID)
+        {
+            await _productRepository.DeleteAsync(productID);
+        }
+
         public async Task<Package> GetPackageAsync(long packageID)
         {
             return await _packageRepository.GetByIdAsync(packageID);

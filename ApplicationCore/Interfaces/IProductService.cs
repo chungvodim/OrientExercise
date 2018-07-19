@@ -13,5 +13,6 @@ namespace ApplicationCore.Interfaces
         Task<Product> AddProductAsync(Product product);
         Task UpdatePackageNameAsync(long packageID, string packageName);
         Task<Package> GetPackageAsync(long packageID);
+        Task DeleteProductAsync(long productID);
     }
 }
