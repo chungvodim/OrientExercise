@@ -47,7 +47,7 @@ namespace WebApp.Controllers
             return Ok(new ApiResponse(HttpStatusCode.OK, ApiResponseType.Success, "Add product successfully"));
         }
 
-        [HttpPut]
+        [HttpDelete]
         public async Task<IActionResult> DeleteProduct(long productID)
         {
             await _productService.DeleteProductAsync(productID);
