@@ -11,12 +11,16 @@ namespace ApplicationCore.Interfaces
     public interface IAsyncRepository<T> : IRepository<T> where T : BaseEntity
     {
         Task<T> GetByIdAsync(long id);
+        Task<bool> AnyAsync(Expression<Func<T, bool>> filter);
         Task<List<T>> ListAllAsync();
         Task<List<T>> ListAsync(ISpecification<T> spec);
-        Task<List<T>> ListAsync(Expression<Func<T, bool>> filter, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy);
-        Task<T> AddAsync(T entity);
-        Task UpdateAsync(T entity);
-        Task DeleteAsync(T entity);
-        Task DeleteAsync(long id);
+        Task<List<T>> ListAsync(Expression<Func<T, bool>> filter, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null);
+        Task<T> SingleOrDefaultAsync(Expression<Func<T, bool>> filter);
+        Task<T> FirstOrDefaultAsync(Expression<Func<T, bool>> filter);
+        Task<T> AddAsync(T entity, bool saveChange = true);
+        Task UpdateAsync(T entity, bool saveChange = true);
+        Task DeleteAsync(T entity, bool saveChange = true);
+        Task DeleteAsync(long id, bool saveChange = true);
+        Task<int> SaveChangeAsync();
     }
 }

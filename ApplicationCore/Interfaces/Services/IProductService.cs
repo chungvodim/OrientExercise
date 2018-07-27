@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using ApplicationCore.DTO;
 using ApplicationCore.Entities;
 
-namespace ApplicationCore.Interfaces
+namespace ApplicationCore.Interfaces.Services
 {
     public interface IProductService
     {

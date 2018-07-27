@@ -21,6 +21,11 @@ namespace Infrastructure.Data.Repositories
             this._dbSet = this._dbContext.Set<T>();
         }
 
+        public DbSet<T> GetDbSet()
+        {
+            return this._dbSet;
+        }
+
         public virtual T GetById(long id)
         {
             return _dbContext.Set<T>().Find(id);
@@ -34,6 +39,16 @@ namespace Infrastructure.Data.Repositories
         public virtual async Task<T> GetByIdAsync(long id)
         {
             return await _dbContext.Set<T>().FindAsync(id);
+        }
+
+        public async Task<bool> AnyAsync(Expression<Func<T, bool>> filter)
+        {
+            return await this._dbSet.AnyAsync(filter);
+        }
+
+        public bool Any(Expression<Func<T, bool>> filter)
+        {
+            return this._dbSet.Any(filter);
         }
 
         public IEnumerable<T> ListAll()
@@ -64,7 +79,7 @@ namespace Infrastructure.Data.Repositories
                             .AsEnumerable();
         }
 
-        public IEnumerable<T> List(Expression<Func<T, bool>> filter, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy)
+        public IEnumerable<T> List(Expression<Func<T, bool>> filter, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null)
         {
             IQueryable<T> query = this._dbSet;
             if (filter != null)
@@ -93,7 +108,7 @@ namespace Infrastructure.Data.Repositories
                             .ToListAsync();
         }
 
-        public async Task<List<T>> ListAsync(Expression<Func<T, bool>> filter, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy)
+        public async Task<List<T>> ListAsync(Expression<Func<T, bool>> filter, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null)
         {
             IQueryable<T> query = this._dbSet;
             if (filter != null)
@@ -104,7 +119,7 @@ namespace Infrastructure.Data.Repositories
             return await (orderBy == null ? query.ToListAsync<T>() : orderBy(query).ToListAsync<T>());
         }
 
-        public T Add(T entity)
+        public T Add(T entity, bool saveChange = true)
         {
             _dbContext.Set<T>().Add(entity);
             _dbContext.SaveChanges();
@@ -112,7 +127,7 @@ namespace Infrastructure.Data.Repositories
             return entity;
         }
 
-        public async Task<T> AddAsync(T entity)
+        public async Task<T> AddAsync(T entity, bool saveChange = true)
         {
             _dbContext.Set<T>().Add(entity);
             await _dbContext.SaveChangesAsync();
@@ -120,45 +135,70 @@ namespace Infrastructure.Data.Repositories
             return entity;
         }
 
-        public void Update(T entity)
+        public void Update(T entity, bool saveChange = true)
         {
             _dbContext.Entry(entity).State = EntityState.Modified;
             _dbContext.SaveChanges();
         }
 
-        public async Task UpdateAsync(T entity)
+        public async Task UpdateAsync(T entity, bool saveChange = true)
         {
             _dbContext.Entry(entity).State = EntityState.Modified;
             await _dbContext.SaveChangesAsync();
         }
 
-        public void Delete(T entity)
+        public void Delete(T entity, bool saveChange = true)
         {
             _dbContext.Set<T>().Remove(entity);
             _dbContext.SaveChanges();
         }
 
-        public async Task DeleteAsync(T entity)
+        public async Task DeleteAsync(T entity, bool saveChange = true)
         {
             _dbContext.Set<T>().Remove(entity);
             await _dbContext.SaveChangesAsync();
         }
 
-        public DbSet<T> GetDbSet()
-        {
-            return this._dbSet;
-        }
-
-        public async Task DeleteAsync(long id)
+        public async Task DeleteAsync(long id, bool saveChange = true)
         {
             var entity = await GetByIdAsync(id);
             await DeleteAsync(entity);
         }
 
-        public void Delete(long id)
+        public void Delete(long id, bool saveChange = true)
         {
             var entity = GetById(id);
             Delete(entity);
+        }
+
+        public async Task<int> SaveChangeAsync()
+        {
+            return await _dbContext.SaveChangesAsync();
+        }
+
+        public int SaveChange()
+        {
+            return _dbContext.SaveChanges();
+        }
+
+        public async Task<T> SingleOrDefaultAsync(Expression<Func<T, bool>> filter)
+        {
+            return await this._dbSet.SingleOrDefaultAsync(filter);
+        }
+
+        public async Task<T> FirstOrDefaultAsync(Expression<Func<T, bool>> filter)
+        {
+            return await this._dbSet.FirstOrDefaultAsync(filter);
+        }
+
+        public T SingleOrDefaul(Expression<Func<T, bool>> filter)
+        {
+            return this._dbSet.FirstOrDefault(filter);
+        }
+
+        public T FirstOrDefaul(Expression<Func<T, bool>> filter)
+        {
+            return this._dbSet.FirstOrDefault(filter);
         }
     }
 }

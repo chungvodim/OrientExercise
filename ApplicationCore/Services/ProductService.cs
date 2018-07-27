@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using ApplicationCore.DTO;
 using Microsoft.EntityFrameworkCore;
+using ApplicationCore.Interfaces.Services;
 
 namespace ApplicationCore.Services
 {
