@@ -13,7 +13,6 @@ using WebApp.Models;
 
 namespace WebApp.Controllers
 {
-    [ApiController]
     public class ProductController : BaseApiController
     {
         private readonly IProductService _productService;

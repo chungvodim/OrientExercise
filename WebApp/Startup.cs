@@ -17,6 +17,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using AutoMapper;
+using ApplicationCore.Configurations;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 namespace WebApp
 {
@@ -42,8 +46,7 @@ namespace WebApp
         private void ConfigureInMemoryDatabases(IServiceCollection services)
         {
             // use in-memory database
-            services.AddDbContext<MyDbContext>(c =>
-                c.UseInMemoryDatabase("MyDbContext"));
+            services.AddDbContext<MyDbContext>(c => c.UseInMemoryDatabase("MyDbContext"));
 
             ConfigureServices(services);
         }
@@ -57,22 +60,49 @@ namespace WebApp
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors();
+            services.AddMvc().SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_2_1);
+            //services.AddAutoMapper();
+
+            // configure strongly typed settings objects
+            var appSettingsSection = Configuration.GetSection("AppSettings");
+            services.Configure<AppSettings>(appSettingsSection);
+
+            // configure jwt authentication
+            var appSettings = appSettingsSection.Get<AppSettings>();
+            var key = Encoding.ASCII.GetBytes(appSettings.Secret);
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(x =>
+            {
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                };
+            });
+
             services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
             services.AddScoped(typeof(IAsyncRepository<>), typeof(EfRepository<>));
-
             services.AddScoped<IProductService, ProductService>();
-
+            services.AddScoped<IUserService, UserService>();
             services.AddScoped(typeof(IAppLogger<>), typeof(LoggerAdapter<>));
-
-            services.AddMvc().SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_2_1);
 
             _services = services;
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app,
-            IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+            loggerFactory.AddConsole();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -81,14 +111,20 @@ namespace WebApp
             }
             else
             {
-                app.UseExceptionHandler("/Product/Error");
+                app.UseExceptionHandler("/Error");
                 app.UseHsts();
             }
 
-            //app.UseHttpsRedirection();
-            //app.UseStaticFiles();
-            //app.UseAuthentication();
+            // global cors policy
+            app.UseCors(builder => builder
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials());
 
+            //app.UseHttpsRedirection();
+            app.UseAuthentication();
+            app.UseStaticFiles();
             app.UseMvc();
         }
 
