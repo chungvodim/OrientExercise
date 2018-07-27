@@ -60,8 +60,15 @@ namespace WebApp
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors();
-            services.AddMvc().SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_2_1);
+            services.AddCors(option => option.AddPolicy("MyPolicy", builder =>
+            {
+                builder.AllowAnyOrigin()
+                       .AllowAnyMethod()
+                       .AllowAnyHeader()
+                       .AllowCredentials();
+            }));
+            //services.AddMvc().SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_2_1);
+            services.AddMvc();
             //services.AddAutoMapper();
 
             // configure strongly typed settings objects
@@ -116,11 +123,7 @@ namespace WebApp
             }
 
             // global cors policy
-            app.UseCors(builder => builder
-                .AllowAnyOrigin()
-                .AllowAnyMethod()
-                .AllowAnyHeader()
-                .AllowCredentials());
+            app.UseCors("MyPolicy");
 
             //app.UseHttpsRedirection();
             app.UseAuthentication();

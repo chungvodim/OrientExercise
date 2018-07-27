@@ -12,7 +12,7 @@ namespace Bootstrapper
         public AutoMapperProfile()
         {
             CreateMap<User, UserDTO>().ReverseMap();
-            CreateMap<Product, ProductDTO>();
+            CreateMap<Product, ProductDTO>().ReverseMap();
         }
     }
 }
