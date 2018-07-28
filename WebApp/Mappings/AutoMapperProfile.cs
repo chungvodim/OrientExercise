@@ -3,9 +3,10 @@ using ApplicationCore.Entities;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace Bootstrapper
+namespace WebApp.Mappings
 {
     public class AutoMapperProfile : Profile
     {
