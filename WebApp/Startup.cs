@@ -69,7 +69,7 @@ namespace WebApp
             }));
             //services.AddMvc().SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_2_1);
             services.AddMvc();
-            //services.AddAutoMapper();
+            services.AddAutoMapper();
 
             // configure strongly typed settings objects
             var appSettingsSection = Configuration.GetSection("AppSettings");
