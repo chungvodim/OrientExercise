@@ -109,16 +109,16 @@ namespace WebApp
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             loggerFactory.AddConsole();
+            app.UseExceptionHandler("/Error/Index");
 
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                //app.UseDeveloperExceptionPage();
                 ListAllRegisteredServices(app);
                 app.UseDatabaseErrorPage();
             }
             else
             {
-                app.UseExceptionHandler("/Error");
                 app.UseHsts();
             }
 
@@ -128,6 +128,7 @@ namespace WebApp
             //app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseStaticFiles();
+            app.UseStatusCodePages();
             app.UseMvc();
         }
 
